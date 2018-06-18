@@ -13,14 +13,16 @@ const deleteAll = process.argv[5] === "1";
 function ergodicDir(dir_path) {
   const files = fs.readdirSync(dir_path);
 
-  files.forEach(function(file_name) {
+  files.forEach(function (file_name) {
     const file_path = path.normalize(dir_path + "/" + file_name);
     const stat = fs.statSync(file_path);
 
     if (stat.isFile()) {
       const file_name_arr = file_name.split("@");
 
-      if (file_name_arr.length == 0) {
+      // console.log(file_name_arr);
+
+      if (file_name_arr.length < 2) {
         return;
       }
 
@@ -60,7 +62,7 @@ ergodicDir(images_source_path);
 function deleteAssetsDir() {
   const files = fs.readdirSync(assets_path);
 
-  files.forEach(function(file_name) {
+  files.forEach(function (file_name) {
     const file_path = path.resolve(assets_path + "/" + file_name);
     const stat = fs.statSync(file_path);
 
@@ -78,7 +80,7 @@ function deleteFolder(path) {
   var files = [];
   if (fs.existsSync(path)) {
     files = fs.readdirSync(path);
-    files.forEach(function(file, index) {
+    files.forEach(function (file, index) {
       var curPath = path + "/" + file;
       if (fs.statSync(curPath).isDirectory()) {
         deleteFolder(curPath);
@@ -113,15 +115,15 @@ for (const [k, v] of image_map) {
 
   var json_code = {};
 
-  json_code.info = {
-    version: 1,
-    author: "xcode"
-  };
-
   json_code.images = [];
 
+  json_code.images.push(getImageObj("1x", ""));
   for (const image_name in v) {
     const image_path = v[image_name];
+
+    if (image_name.includes('@')===false) {
+      continue;
+    }
 
     const match_scale = image_name.match(/[@].+x/g);
     if (match_scale.length > 0) {
@@ -133,6 +135,15 @@ for (const [k, v] of image_map) {
     var writeStream = fs.createWriteStream(`${image_dir}/${image_name}`);
     readStream.pipe(writeStream);
   }
+
+  json_code.images.sort(function (a, b) {
+    return a.idiom < b.idiom;
+  })
+
+  json_code.info = {
+    version: 1,
+    author: "xcode"
+  };
 
   fs.writeFileSync(
     `${image_dir}/Contents.json`,
