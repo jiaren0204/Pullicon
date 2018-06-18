@@ -1,7 +1,7 @@
 项目UI切图经常改动(新增,删除,修改...),手动管理不太方便,用脚本处理这种重复性工作
 
 使用方法:
-1. 安装nodejs LTS版本 ![](https://nodejs.org/en/)
+1. 安装nodejs LTS版本 [官网](https://nodejs.org/en/)
 2. 下载(1)图片名生成.js (2)图片脚本.sh 至项目
 3. 修改.sh配置
 
